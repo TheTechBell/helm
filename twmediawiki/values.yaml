@@ -1,0 +1,14 @@
+image:
+  repository: centos
+  tag: "8"
+  
+commands:
+  - "dnf module reset php"
+  - "dnf module enable php:7.4"
+  - "dnf install -y httpd php php-mysqlnd php-gd php-xml mariadb-server mariadb php-mbstring php-json mod_ssl php-intl php-apcu"
+  
+ports:
+  - name: http
+    port: 80
+    targetPort: 80
+

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-container
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          #command: ["/bin/sleep", "3600"]
+          command: ["/bin/bash", "-c", "dnf --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos -y  &&  dnf install glibc-langpack-en -y && dnf makecache -y && dnf module reset php -y && dnf module enable php:7.4 -y && dnf install httpd php php-mysqlnd php-gd php-xml mariadb-server mariadb php-mbstring php-json mod_ssl php-intl php-apcu -y && systemctl enable mariadb && systemctl enable httpd && dnf install passwd -y && usermod -p 'Passwd1212' root"]
+          #command: ["/bin/bash", "-c", "systemctl enable mariadb && systemctl enable httpd"]
+          command: [ "/bin/bash", "-c", "mysql_config.sh && /usr/sbin/httpd -DFOREGROUND" ]
+          command: [ "/bin/bash", "-c", "mediawiki_postscript.sh" 
+          command: ["/bin/sleep", "9600"]
+          ports:
+            - name: http
+              containerPort: 80
+
